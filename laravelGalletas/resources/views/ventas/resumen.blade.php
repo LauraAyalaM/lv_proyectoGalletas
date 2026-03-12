@@ -72,7 +72,7 @@
             </td>
             <td>
                 @if($item->saldo_pendiente > 0)
-                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#abonoModal" data-venta="{{ $item->venta_id }}" data-saldo="{{ $item->saldo_pendiente }}">Agregar Abono</button>
+                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#abonoModal" data-venta="{{ $item->venta_id }}" data-saldo="{{ $item->saldo_pendiente }}">Registrar Pago</button>
                 @endif
             </td>
         </tr>

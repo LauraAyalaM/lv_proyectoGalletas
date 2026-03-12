@@ -17,6 +17,7 @@ Route::post('/ventas/abono', [VentaController::class, 'registrarAbono'])->name('
 Route::get('/', function () {
     return redirect('/ventas/resumen');
 });
+Route::post('ventas/{id}/pago', [VentaController::class, 'registrarPago'])->name('ventas.registrar_pago');
 
 /*
 |--------------------------------------------------------------------------

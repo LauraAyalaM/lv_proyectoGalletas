@@ -232,4 +232,21 @@ public function todosPedidos(Request $request)
 
     return view('ventas.todos', compact('resumen'));
 }
+public function registrarPago(Request $request, $id)
+{
+    $request->validate([
+        'monto' => 'required|numeric|min:0',
+    ]);
+
+    $venta = Venta::findOrFail($id);
+    $venta->saldo_pendiente -= $request->monto;
+
+    if($venta->saldo_pendiente < 0){
+        $venta->saldo_pendiente = 0;
+    }
+
+    $venta->save();
+
+    return back()->with('success', 'Pago registrado correctamente.');
+}
 }
