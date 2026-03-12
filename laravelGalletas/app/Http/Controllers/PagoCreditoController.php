@@ -67,9 +67,15 @@ class PagoCreditoController extends Controller
         return view('pagos.edit', compact('pagoCredito', 'ventasCredito'));
     }
 
+    public function destroy(PagoCredito $pagoCredito)
+{
+    $pagoCredito->delete();
+    return redirect()->route('pagos.index')->with('success', 'Pago eliminado correctamente.');
+}
     /**
      * Actualizar pago
      */
+
     public function update(Request $request, PagoCredito $pagoCredito)
     {
         $request->validate([

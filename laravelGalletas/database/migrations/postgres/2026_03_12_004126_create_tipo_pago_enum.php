@@ -7,11 +7,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement("CREATE TYPE tipo_pago_enum AS ENUM ('efectivo', 'nequi', 'transferencia', 'credito')");
+        DB::statement("CREATE TYPE tipo_pago_enum AS ENUM ('efectivo', 'nequi', 'transferencia', 'credito');");
     }
 
     public function down(): void
     {
-        DB::statement("DROP TYPE tipo_pago_enum");
+        DB::statement("DROP TYPE IF EXISTS tipo_pago_enum;");
     }
 };

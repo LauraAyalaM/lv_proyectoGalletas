@@ -23,4 +23,10 @@ class InventarioDiario extends Model
     {
         return $this->belongsTo(Producto::class);
     }
+
+    // Accesor para mostrar fecha en formato legible
+    public function getFechaFormateadaAttribute()
+    {
+        return \Carbon\Carbon::parse($this->fecha)->format('d/m/Y');
+    }
 }

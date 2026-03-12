@@ -9,17 +9,41 @@ class Venta extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['cliente_id', 'fecha', 'tipo_pago', 'total'];
+    protected $table = 'ventas';
 
-    public function cliente() {
+    protected $fillable = [
+        'cliente_id',
+        'fecha',
+        'tipo_pago',
+        'total'
+    ];
+
+    protected $casts = [
+        'fecha' => 'datetime'
+    ];
+
+    /*
+    Relación con cliente
+    */
+    public function cliente()
+    {
         return $this->belongsTo(Cliente::class);
     }
 
-    public function detalles() {
+    /*
+    Relación con detalle de venta
+    */
+    public function detalles()
+    {
         return $this->hasMany(DetalleVenta::class);
     }
 
-    public function pagosCredito() {
+    /*
+    Relación con pagos de crédito
+    */
+    public function pagosCredito()
+    {
         return $this->hasMany(PagoCredito::class);
     }
+    
 }

@@ -6,22 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('ventas', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('ventas', function (Blueprint $table) {
+            $table->boolean('es_credito')->default(false)->after('tipo_pago');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('ventas');
+        Schema::table('ventas', function (Blueprint $table) {
+            $table->dropColumn('es_credito');
+        });
     }
 };

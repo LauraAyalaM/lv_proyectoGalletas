@@ -79,4 +79,8 @@ class ProductoController extends Controller
 
         return redirect()->route('productos.index')->with('success', 'Producto eliminado correctamente.');
     }
+    public function getPrecioFormateadoAttribute()
+{
+    return number_format($this->precio, 0, ',', '.');
+}
 }

@@ -23,4 +23,10 @@ class PagoCredito extends Model
     {
         return $this->belongsTo(Venta::class);
     }
+
+    // Accesor para mostrar fecha formateada
+    public function getFechaFormateadaAttribute()
+    {
+        return \Carbon\Carbon::parse($this->fecha)->format('d/m/Y H:i');
+    }
 }

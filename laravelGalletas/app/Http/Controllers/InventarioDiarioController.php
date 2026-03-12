@@ -10,16 +10,21 @@ use Carbon\Carbon;
 class InventarioDiarioController extends Controller
 {
     /**
-     * Mostrar inventario diario
+     * Mostrar inventario diario (solo de hoy)
      */
     public function index()
     {
-        $inventario = InventarioDiario::with('producto')->orderBy('fecha', 'desc')->get();
-        return view('inventario.index', compact('inventario'));
+        $inventario = InventarioDiario::with('producto')
+            ->whereDate('fecha', Carbon::today())
+            ->orderBy('fecha', 'desc')
+            ->get();
+
+        $productos = Producto::all(); // Para el select de agregar inventario
+        return view('inventario.index', compact('inventario', 'productos'));
     }
 
     /**
-     * Crear nuevo registro de inventario
+     * Crear nuevo registro de inventario (formulario)
      */
     public function create()
     {
@@ -34,18 +39,31 @@ class InventarioDiarioController extends Controller
     {
         $request->validate([
             'producto_id' => 'required|exists:productos,id',
-            'fecha' => 'required|date',
             'cantidad_inicial' => 'required|integer|min:0',
         ]);
 
-        InventarioDiario::create([
-            'producto_id' => $request->producto_id,
-            'fecha' => $request->fecha,
-            'cantidad_inicial' => $request->cantidad_inicial,
-            'cantidad_disponible' => $request->cantidad_inicial, // Al inicio disponible = inicial
-        ]);
+        // Verificar si ya existe inventario para este producto hoy
+        $inventario = InventarioDiario::where('producto_id', $request->producto_id)
+            ->whereDate('fecha', Carbon::today())
+            ->first();
 
-        return redirect()->route('inventario.index')->with('success', 'Inventario diario registrado correctamente.');
+        if ($inventario) {
+            // Sumar cantidades al registro existente
+            $inventario->cantidad_inicial += $request->cantidad_inicial;
+            $inventario->cantidad_disponible += $request->cantidad_inicial;
+            $inventario->save();
+        } else {
+            // Crear nuevo registro
+            InventarioDiario::create([
+                'producto_id' => $request->producto_id,
+                'fecha' => now(),
+                'cantidad_inicial' => $request->cantidad_inicial,
+                'cantidad_disponible' => $request->cantidad_inicial,
+            ]);
+        }
+
+        return redirect()->route('inventario.index')
+            ->with('success', 'Inventario diario registrado correctamente.');
     }
 
     /**
@@ -77,6 +95,17 @@ class InventarioDiarioController extends Controller
 
         $inventarioDiario->update($request->only(['cantidad_inicial', 'cantidad_disponible']));
 
-        return redirect()->route('inventario.index')->with('success', 'Inventario actualizado correctamente.');
+        return redirect()->route('inventario.index')
+            ->with('success', 'Inventario actualizado correctamente.');
+    }
+
+    /**
+     * Eliminar registro de inventario
+     */
+    public function destroy(InventarioDiario $inventarioDiario)
+    {
+        $inventarioDiario->delete();
+        return redirect()->route('inventario.index')
+            ->with('success', 'Registro eliminado correctamente.');
     }
 }
