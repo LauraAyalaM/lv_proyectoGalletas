@@ -35,36 +35,24 @@ class InventarioDiarioController extends Controller
     /**
      * Guardar inventario diario
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'producto_id' => 'required|exists:productos,id',
-            'cantidad_inicial' => 'required|integer|min:0',
-        ]);
+   public function store(Request $request)
+{
+    $request->validate([
+        'producto_id' => 'required|exists:productos,id',
+        'cantidad_inicial' => 'required|integer|min:0',
+    ]);
 
-        // Verificar si ya existe inventario para este producto hoy
-        $inventario = InventarioDiario::where('producto_id', $request->producto_id)
-            ->whereDate('fecha', Carbon::today())
-            ->first();
+    // Siempre crear un nuevo registro para el día actual
+    InventarioDiario::create([
+        'producto_id' => $request->producto_id,
+        'fecha' => now(), // fecha actual
+        'cantidad_inicial' => $request->cantidad_inicial,
+        'cantidad_disponible' => $request->cantidad_inicial,
+    ]);
 
-        if ($inventario) {
-            // Sumar cantidades al registro existente
-            $inventario->cantidad_inicial += $request->cantidad_inicial;
-            $inventario->cantidad_disponible += $request->cantidad_inicial;
-            $inventario->save();
-        } else {
-            // Crear nuevo registro
-            InventarioDiario::create([
-                'producto_id' => $request->producto_id,
-                'fecha' => now(),
-                'cantidad_inicial' => $request->cantidad_inicial,
-                'cantidad_disponible' => $request->cantidad_inicial,
-            ]);
-        }
-
-        return redirect()->route('inventario.index')
-            ->with('success', 'Inventario diario registrado correctamente.');
-    }
+    return redirect()->route('inventario.index')
+        ->with('success', 'Inventario diario registrado correctamente.');
+}
 
     /**
      * Mostrar detalles de inventario
